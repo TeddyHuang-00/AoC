@@ -50,6 +50,14 @@ pub fn parse_whitespace_separated<T>(
     input.as_ref().split_whitespace().map(parser).collect()
 }
 
+/// Parse a line of input into a Vec using a provided parser function
+///
+/// # Errors
+/// This function will return an error if the parser function returns an error.
+pub fn parse_chars<T>(input: impl AsRef<str>, parser: fn(char) -> Result<T>) -> Result<Vec<T>> {
+    input.as_ref().chars().map(parser).collect()
+}
+
 /// Parse a grid of characters using a provided parser function
 ///
 /// # Errors
@@ -63,7 +71,7 @@ pub fn parse_char_grid<T>(
     let content = input.as_ref();
     let grid = content
         .lines()
-        .map(|line| line.chars().map(parser).collect())
+        .map(|line| parse_chars(line, parser))
         .collect::<Result<Vec<Vec<T>>>>()?;
     nested_vec_to_array2(grid)
 }
