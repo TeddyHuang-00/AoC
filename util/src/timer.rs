@@ -181,10 +181,10 @@ where
     // Update the estimation of iterations to account for burn-in.
     let iterations = time_limit.as_nanos() / cold_run_time.as_nanos();
     let iterations = match iterations {
-        ..10 => iterations.min(3),
+        ..10 => iterations.max(3),
         10..100 => iterations / 10 * 10,
         100..1000 => iterations / 100 * 100,
-        _ => (iterations / 1000 * 1000).min(1_000_000),
+        1000.. => (iterations / 1000 * 1000).min(1_000_000),
     };
     let measurements = (0..iterations)
         .map(|_| black_box(measure_once(&mut f)).as_nanos())
