@@ -2,6 +2,7 @@
 
 pub mod parser;
 pub mod timer;
+pub mod vector;
 pub mod writer;
 
 use std::time::Duration;
