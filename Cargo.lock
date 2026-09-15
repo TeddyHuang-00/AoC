@@ -152,5 +152,6 @@ name = "y2015d01"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "rayon",
  "util",
 ]
