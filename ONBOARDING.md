@@ -118,6 +118,25 @@ just run 2025 05
 > # Note: Use `*` to match tests for all years and all days.
 > ```
 
+### Benchmarking the performance
+
+To benchmark your solution for the latest year and day, run:
+
+```sh
+just bench
+```
+
+As benchmarks are written as tests, you can also specify a particular year and day, or run benchmarks for the whole year or the whole project:
+
+```sh
+just bench 2025 05
+just bench 2025 "*"
+just bench "*" "*"
+# Note: Use `*` just like in `just test` to match all days or years.
+```
+
+Benchmark results will be written in each day's directory, next to the input and output files, in a file named `benchmark.csv`. You can open this file in a spreadsheet application to analyze the results.
+
 ### Housekeeping Chores
 
 To format the code and sort dependencies, run:

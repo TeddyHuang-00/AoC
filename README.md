@@ -9,11 +9,9 @@ Key directories and files:
 ```
 .
 ├── template            # Template for solutions
-│   └── main.rs
+│   └── ...
 ├── util                # Shared library for common utilities
-│   └── src
-│       ├── lib.rs
-│       └── parser.rs
+│   └── ...
 └── yearXXXX            # A directory for each year of Advent of Code
     └── dayYY           # A directory for each day of the year
         ├── example.in  # Example input data
