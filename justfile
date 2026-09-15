@@ -71,7 +71,7 @@ run Y=YEAR D=DAY:
     cargo run -r -p y{{ Y }}d{{ D }}
 
 [doc("Create a new day's puzzle scaffold")]
-[group("puzzle")]
+[group("scaffold")]
 new-day Y=YEAR D=NEXT_DAY: && format
     -rm -rf year{{ Y }}/day{{ D }}
     cargo new year{{ Y }}/day{{ D }} --name y{{ Y }}d{{ D }} --bin --vcs none
@@ -81,7 +81,7 @@ new-day Y=YEAR D=NEXT_DAY: && format
     cargo add -p y{{ Y }}d{{ D }} anyhow util
 
 [doc("Create a new year's puzzle directory")]
-[group("puzzle")]
+[group("scaffold")]
 new-year Y=NEXT_YEAR:
     -rm -rf year{{ Y }}
     mkdir year{{ Y }}
