@@ -47,6 +47,7 @@ format:
 [group("housekeeping")]
 check: format
     typos **/*.rs
+    cargo +nightly udeps --all-targets --workspace -q
     cargo check --all --workspace
     cargo clippy --workspace
 
