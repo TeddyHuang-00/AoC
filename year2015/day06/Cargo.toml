@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 anyhow.workspace = true
 ndarray.workspace = true
+nom.workspace = true
 util.workspace = true
 
 [lints]

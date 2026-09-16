@@ -1,8 +1,11 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    str::FromStr,
+};
 
 use anyhow::Result;
 use rayon::prelude::*;
-use util::{Solution, chore, parser};
+use util::{Solution, chore};
 
 struct Puzzle {
     strings: Vec<String>,
@@ -16,7 +19,11 @@ impl Puzzle {}
 
 impl Solution for Puzzle {
     fn parse<const E: bool>(input: &str) -> Result<Self> {
-        let strings = parser::parse_lines(input.trim(), |line| Ok(line.to_string()))?;
+        let strings = input
+            .trim()
+            .lines()
+            .map(String::from_str)
+            .collect::<Result<_, _>>()?;
         let vowels = BTreeSet::from_iter(['a', 'e', 'i', 'o', 'u']);
         let forbidden = BTreeSet::from_iter([('a', 'b'), ('c', 'd'), ('p', 'q'), ('x', 'y')]);
         Ok(Self {

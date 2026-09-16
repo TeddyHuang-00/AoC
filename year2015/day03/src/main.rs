@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
 use anyhow::Result;
-use util::{Solution, chore, parser, vector::Vector2D};
+use util::{Solution, chore, vector::Vector2D};
 
 type Position = Vector2D<i32>;
 
@@ -46,15 +46,19 @@ impl Puzzle {
 
 impl Solution for Puzzle {
     fn parse<const E: bool>(input: &str) -> Result<Self> {
-        let directions = parser::parse_chars(input.trim(), |ch| {
-            Ok(match ch {
-                '^' => Direction::Up,
-                'v' => Direction::Down,
-                '<' => Direction::Left,
-                '>' => Direction::Right,
-                _ => anyhow::bail!("Invalid character: {ch}"),
+        let directions = input
+            .trim()
+            .chars()
+            .map(|ch| {
+                Ok(match ch {
+                    '^' => Direction::Up,
+                    'v' => Direction::Down,
+                    '<' => Direction::Left,
+                    '>' => Direction::Right,
+                    _ => anyhow::bail!("Invalid character: {ch}"),
+                })
             })
-        })?;
+            .collect::<Result<_>>()?;
         Ok(Self { directions })
     }
 

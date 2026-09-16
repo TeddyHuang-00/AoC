@@ -1,5 +1,9 @@
 use anyhow::Result;
 use ndarray::{parallel::prelude::*, prelude::*};
+use nom::{
+    IResult, Parser, branch::alt, bytes::tag, character::complete::line_ending, combinator::value,
+    multi::separated_list1, sequence::separated_pair,
+};
 use util::{Solution, chore, parser, vector::Vector2D};
 
 type Coord = Vector2D<usize>;
@@ -15,11 +19,40 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn parse_into_coord(s: &str) -> Result<Coord> {
-        let Some((x, y)) = s.split_once(',') else {
-            anyhow::bail!("Invalid coordinate: {s}");
-        };
-        Ok(Coord::new(x.parse()?, y.parse()?))
+    fn parse_coord(input: &str) -> IResult<&str, Coord> {
+        use nom::character::{char, complete::usize};
+        separated_pair(usize, char(','), usize)
+            .parse_complete(input)
+            .map(|(rem, (x, y))| (rem, Coord::new(x, y)))
+    }
+
+    fn parse_instruction(input: &str) -> IResult<&str, Instruction> {
+        alt((
+            (
+                value(1, tag("turn on ")),
+                separated_pair(Self::parse_coord, tag(" through "), Self::parse_coord),
+            ),
+            (
+                value(-1, tag("turn off ")),
+                separated_pair(Self::parse_coord, tag(" through "), Self::parse_coord),
+            ),
+            (
+                value(0, tag("toggle ")),
+                separated_pair(Self::parse_coord, tag(" through "), Self::parse_coord),
+            ),
+        ))
+        .parse_complete(input)
+        .map(|(rem, (op, (s, e)))| {
+            (
+                rem,
+                match op {
+                    -1 => Instruction::Off(s, e),
+                    0 => Instruction::Toggle(s, e),
+                    1 => Instruction::On(s, e),
+                    _ => unreachable!("Only three possible states"),
+                },
+            )
+        })
     }
 
     fn apply_instructions<T>(
@@ -48,17 +81,8 @@ impl Puzzle {
 
 impl Solution for Puzzle {
     fn parse<const E: bool>(input: &str) -> Result<Self> {
-        let instructions = parser::parse_lines(input.trim(), |line| {
-            let parts = line.rsplit(' ').collect::<Vec<_>>();
-            let end = Self::parse_into_coord(parts[0])?;
-            let start = Self::parse_into_coord(parts[2])?;
-            match parts[3] {
-                "toggle" => Ok(Instruction::Toggle(start, end)),
-                "on" => Ok(Instruction::On(start, end)),
-                "off" => Ok(Instruction::Off(start, end)),
-                _ => anyhow::bail!("Invalid instruction: {}", parts[3]),
-            }
-        })?;
+        let instructions =
+            parser::parse_input_str(input, separated_list1(line_ending, Self::parse_instruction))?;
         Ok(Self { instructions })
     }
 

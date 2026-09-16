@@ -1,134 +1,45 @@
-//! Common reading and parsing utilities
+//! Common parsing and converting utilities
+
+use std::fmt::{Debug, Display};
 
 use anyhow::Result;
 use ndarray::Array2;
+use nom::{
+    Parser,
+    character::complete::line_ending,
+    combinator::{all_consuming, opt},
+    error::ParseError,
+    sequence::terminated,
+};
 
 /// Convert a nested Vec (`Vec<Vec<T>>`) into a 2D ndarray `Array2<T>`
 ///
 /// # Errors
 /// This function will return an error if the nested Vec does not have a
 /// consistent number of columns in each row.
-fn nested_vec_to_array2<T>(grid: Vec<Vec<T>>) -> Result<Array2<T>> {
+pub fn nested_vec_to_array2<T>(grid: Vec<Vec<T>>) -> Result<Array2<T>> {
     let row_count = grid.len();
     let col_count = grid.first().map_or(0, Vec::len);
     let flat_data = grid.into_iter().flatten().collect::<Vec<T>>();
     Ok(Array2::from_shape_vec((row_count, col_count), flat_data)?)
 }
 
-/// Parse lines of input using a provided parser function
-///
-/// # Errors
-/// This function will return any errors produced by the parser function.
-pub fn parse_lines<T>(input: impl AsRef<str>, parser: fn(&str) -> Result<T>) -> Result<Vec<T>> {
-    input.as_ref().lines().map(parser).collect()
-}
-
-/// Parse comma-separated values using a provided parser function
-///
-/// # Errors
-/// This function will return any errors produced by the parser function.
-pub fn parse_comma_separated<T>(
-    input: impl AsRef<str>,
-    parser: fn(&str) -> Result<T>,
-) -> Result<Vec<T>> {
-    input
-        .as_ref()
-        .trim()
-        .split(',')
-        .map(|s| parser(s.trim()))
-        .collect()
-}
-
-/// Parse whitespace-separated values using a provided parser function
-///
-/// # Errors
-/// This function will return an error if the parser function returns an error.
-pub fn parse_whitespace_separated<T>(
-    input: impl AsRef<str>,
-    parser: fn(&str) -> Result<T>,
-) -> Result<Vec<T>> {
-    input.as_ref().split_whitespace().map(parser).collect()
-}
-
-/// Parse a line of input into a Vec using a provided parser function
-///
-/// # Errors
-/// This function will return an error if the parser function returns an error.
-pub fn parse_chars<T>(input: impl AsRef<str>, parser: fn(char) -> Result<T>) -> Result<Vec<T>> {
-    input.as_ref().chars().map(parser).collect()
-}
-
-/// Parse a grid of characters using a provided parser function
+/// Parse the whole input string using the provided parser and return the
+/// result.
 ///
 /// # Errors
 /// This function will return an error if:
-/// - any line has a different number of columns, or
-/// - the parser function returns an error.
-pub fn parse_char_grid<T>(
-    input: impl AsRef<str>,
-    parser: fn(char) -> Result<T>,
-) -> Result<Array2<T>> {
-    let content = input.as_ref();
-    let grid = content
-        .lines()
-        .map(|line| parse_chars(line, parser))
-        .collect::<Result<Vec<Vec<T>>>>()?;
-    nested_vec_to_array2(grid)
-}
-
-/// Parse a grid of whitespace-separated values using a provided parser function
-///
-/// # Errors
-/// This function will return an error if:
-/// - any line has a different number of columns, or
-/// - the parser function returns an error.
-pub fn parse_grid<T>(input: impl AsRef<str>, parser: fn(&str) -> Result<T>) -> Result<Array2<T>> {
-    let content = input.as_ref();
-    let grid = content
-        .lines()
-        .map(|line| parse_whitespace_separated(line, parser))
-        .collect::<Result<Vec<Vec<T>>>>()?;
-    nested_vec_to_array2(grid)
-}
-
-/// Parse a fixed-width grid using a provided parser function.
-///
-/// The widths of each column must be specified.
-///
-/// # Errors
-/// This function will return an error if:
-/// - the specified column widths do not match the input data, or
-/// - the parser function returns an error, or
-/// - the resulting nested Vec cannot be converted into an Array2.
-pub fn parse_fixed_width_grid<T>(
-    input: impl AsRef<str>,
-    column_widths: impl AsRef<[usize]>,
-    parser: fn(&str) -> Result<T>,
-) -> Result<Array2<T>> {
-    let content = input.as_ref();
-    let column_widths = column_widths.as_ref();
-    let grid = content
-        .lines()
-        .map(|line| {
-            let mut cols = Vec::with_capacity(column_widths.len());
-            let mut start = 0;
-            for &width in column_widths {
-                if start >= line.len() {
-                    anyhow::bail!("Line is shorter than expected based on column widths");
-                }
-                let end = start + width;
-                let slice = &line[start..end];
-                cols.push(parser(slice)?);
-                start = end;
-            }
-            // Handle any remaining characters in the line as the last column
-            if start < line.len() {
-                cols.push(parser(&line[start..])?);
-            }
-            Ok(cols)
-        })
-        .collect::<Result<Vec<Vec<T>>>>()?;
-    nested_vec_to_array2(grid)
+/// - The parser fails to parse during the process.
+/// - The parser does not consume the entire input string.
+pub fn parse_input_str<'a, O, E, F>(input: &'a str, parser: F) -> Result<O>
+where
+    E: ParseError<&'a str> + Debug + Display,
+    F: Parser<&'a str, Output = O, Error = E>,
+{
+    all_consuming(terminated(parser, opt(line_ending)))
+        .parse_complete(input)
+        .map(|(_, result)| result)
+        .map_err(|err| anyhow::anyhow!("Failed to parse input: {err}"))
 }
 
 #[cfg(test)]
@@ -136,10 +47,6 @@ mod tests {
     use ndarray::prelude::*;
 
     use super::*;
-
-    fn int_parser(s: &str) -> Result<i32> {
-        s.parse().map_err(Into::into)
-    }
 
     #[test]
     fn test_nested_vec_to_array2() {
@@ -151,94 +58,6 @@ mod tests {
 
         let vec_inconsistent = vec![vec![1, 2], vec![3, 4, 5]];
         let result = nested_vec_to_array2(vec_inconsistent);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_parse_lines() {
-        let input = "1\n2\n3";
-        let result =
-            parse_lines(input, int_parser).unwrap_or_else(|e| panic!("Failed to parse lines: {e}"));
-        assert_eq!(result, vec![1, 2, 3]);
-
-        let input_invalid = "1\ntwo\n3";
-        let result = parse_lines(input_invalid, int_parser);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_parse_comma_separated() {
-        let input = "1,2, 3";
-        let result = parse_comma_separated(input, int_parser)
-            .unwrap_or_else(|e| panic!("Failed to parse comma-separated values: {e}"));
-        assert_eq!(result, vec![1, 2, 3]);
-
-        let input_invalid = "1, two,3";
-        let result = parse_comma_separated(input_invalid, int_parser);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_parse_whitespace_separated() {
-        let input = "1  2\t3";
-        let result = parse_whitespace_separated(input, int_parser)
-            .unwrap_or_else(|e| panic!("Failed to parse whitespace-separated values: {e}"));
-        assert_eq!(result, vec![1, 2, 3]);
-
-        let input_invalid = "1 two 3";
-        let result = parse_whitespace_separated(input_invalid, int_parser);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_parse_grid() {
-        let input = "1 2 3\n4 5 6\n7 8 9";
-        let array =
-            parse_grid(input, int_parser).unwrap_or_else(|e| panic!("Failed to parse grid: {e}"));
-        assert_eq!(array.shape(), &[3, 3]);
-        assert_eq!(array, array![[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
-
-        let input_invalid = "1 2 3\n4 five 6\n7 8 9";
-        let result = parse_grid(input_invalid, int_parser);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_parse_char_grid() {
-        let input = "abc\ndef\nghi";
-        let array =
-            parse_char_grid(input, Ok).unwrap_or_else(|e| panic!("Failed to parse char grid: {e}"));
-        assert_eq!(array.shape(), &[3, 3]);
-        assert_eq!(
-            array,
-            array![['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i']]
-        );
-
-        let input_invalid = "abc\ndef\ngh";
-        let result = parse_char_grid(input_invalid, Ok);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_parse_fixed_width_grid() {
-        let input = "12 345 6789 9\n01 234 5678 8";
-        let column_widths = vec![3, 4, 4, 2];
-        let array = parse_fixed_width_grid(input, &column_widths, |s| int_parser(s.trim()))
-            .unwrap_or_else(|e| panic!("Failed to parse fixed-width grid: {e}"));
-        assert_eq!(array.shape(), &[2, 4]);
-        assert_eq!(array, array![[12, 345, 6789, 9], [1, 234, 5678, 8]]);
-
-        let implicit_widths = vec![3, 4, 5];
-        let array = parse_fixed_width_grid(input, &implicit_widths, |s| int_parser(s.trim()))
-            .unwrap_or_else(|e| {
-                panic!("Failed to parse fixed-width grid with implicit last column: {e}")
-            });
-        assert_eq!(array.shape(), &[2, 4]);
-        assert_eq!(array, array![[12, 345, 6789, 9], [1, 234, 5678, 8]]);
-
-        let input_invalid = "12 345 6789\n01 234 5678 8";
-        let result =
-            parse_fixed_width_grid(input_invalid, &column_widths, |s| int_parser(s.trim()));
         assert!(result.is_err());
     }
 }

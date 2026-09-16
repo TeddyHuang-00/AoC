@@ -1,4 +1,7 @@
 use anyhow::Result;
+use nom::{
+    IResult, Parser, bytes::complete::tag, character::complete::line_ending, multi::separated_list1,
+};
 use rayon::prelude::*;
 use util::{Solution, chore, parser};
 
@@ -6,23 +9,20 @@ struct Puzzle {
     dims: Vec<[u8; 3]>,
 }
 
-impl Puzzle {}
+impl Puzzle {
+    fn parse_dimensions(input: &str) -> IResult<&str, [u8; 3]> {
+        use nom::character::complete::u8;
+        (u8, tag("x"), u8, tag("x"), u8)
+            .parse_complete(input)
+            .map(|(rem, (l, _, w, _, h))| (rem, [l, w, h]))
+    }
+}
 
 impl Solution for Puzzle {
     fn parse<const E: bool>(input: &str) -> Result<Self> {
-        let dims = parser::parse_lines(input.trim(), |line| {
-            let parts: Vec<u8> = line
-                .split('x')
-                .map(|s| s.parse::<u8>().map_err(|e| anyhow::anyhow!(e)))
-                .collect::<Result<Vec<u8>>>()?;
-            if parts.len() != 3 {
-                return Err(anyhow::anyhow!(
-                    "Expected 3 dimensions, got {}: {line}",
-                    parts.len()
-                ));
-            }
-            Ok([parts[0], parts[1], parts[2]])
-        })?;
+        let dims =
+            parser::parse_input_str(input, separated_list1(line_ending, Self::parse_dimensions))?;
+
         Ok(Self { dims })
     }
 

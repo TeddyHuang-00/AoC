@@ -1,6 +1,6 @@
 use anyhow::Result;
 use rayon::prelude::*;
-use util::{Solution, chore, parser};
+use util::{Solution, chore};
 
 struct Puzzle {
     seq: Vec<i8>,
@@ -10,11 +10,15 @@ impl Puzzle {}
 
 impl Solution for Puzzle {
     fn parse<const E: bool>(input: &str) -> Result<Self> {
-        let seq = parser::parse_chars(input.trim(), |char| match char {
-            '(' => Ok(1),
-            ')' => Ok(-1),
-            _ => anyhow::bail!("Invalid input"),
-        })?;
+        let seq = input
+            .trim()
+            .chars()
+            .map(|char| match char {
+                '(' => Ok(1),
+                ')' => Ok(-1),
+                _ => anyhow::bail!("Invalid input"),
+            })
+            .collect::<Result<_>>()?;
         Ok(Self { seq })
     }
 
