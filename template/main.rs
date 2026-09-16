@@ -1,5 +1,5 @@
 use anyhow::Result;
-use util::{Solution, chore, parser};
+use util::{Solution, chore};
 
 struct Puzzle {
     // Add fields here as needed
@@ -15,7 +15,7 @@ impl Solution for Puzzle {
     // to differentiate between the two.
     fn parse<const E: bool>(input: &str) -> Result<Self> {
         // Replace the following line with actual parsing logic
-        let _ = parser::parse_lines(input, |line| Ok(line.to_string()))?;
+        let _ = input.trim();
         Ok(Self {})
     }
 
