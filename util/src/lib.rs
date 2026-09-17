@@ -22,7 +22,7 @@ pub trait InputData {
 /// A trait that defines the structure for an Advent of Code solution.
 pub trait Solution {
     /// Parse the input data for the day's challenge.
-    fn parse<const E: bool>(input: &str) -> Result<Self>
+    fn parse<const E: bool>(input: &'static str) -> Result<Self>
     where
         Self: Sized;
 
