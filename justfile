@@ -47,13 +47,14 @@ format:
 [group("housekeeping")]
 check: format
     typos **/*.rs
-    cargo +nightly udeps --all-targets --workspace -q
+    cargo machete
     cargo check --all --workspace
     cargo clippy --workspace
 
 [doc("Fix lint warnings automatically (safely)")]
 [group("housekeeping")]
 fix: format && format
+    cargo machete --fix
     cargo clippy --fix --allow-dirty --allow-staged --workspace
 
 [doc("Run tests for a specific day's puzzle with example input")]

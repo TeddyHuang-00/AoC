@@ -25,14 +25,14 @@ You are more than welcome to use this as a template for your own Advent of Code 
      - `cargo-autoinherit` (for managing dependencies)
      - `cargo-sort` (for sorting Cargo.toml)
      - `cargo-sort-derives` (for sorting derive macros)
-     - `cargo-udeps` (for detecting unused dependencies)
+     - `cargo-machete` (for detecting unused dependencies)
 
      All can be installed via Cargo or `cargo-binstall`:
 
      ```sh
-     cargo install cargo-autoinherit cargo-sort cargo-sort-derives cargo-udeps
+     cargo install cargo-autoinherit cargo-sort cargo-sort-derives cargo-machete
      # or
-     cargo binstall cargo-autoinherit cargo-sort cargo-sort-derives cargo-udeps
+     cargo binstall cargo-autoinherit cargo-sort cargo-sort-derives cargo-machete
      # or your preferred method, e.g., system package managers
      ```
 
