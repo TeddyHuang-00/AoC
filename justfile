@@ -59,7 +59,7 @@ check: format
 [doc("Fix lint warnings automatically (safely)")]
 [group("housekeeping")]
 fix: format
-    cargo machete --fix
+    code=0; cargo machete --fix --with-metadata || code=$?; case $code in 0|1) exit 0;; *) exit 1;; esac
     cargo clippy --fix --allow-dirty --allow-staged --workspace
 
 [doc("Run tests for a specific day's puzzle with example input")]
