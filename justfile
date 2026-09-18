@@ -31,6 +31,11 @@ NEXT_DAY := ```
     | awk '{ printf "%02d", $2 + 1 }'
 ```
 
+HAS_CHANGES := if path_exists(".jj") == "true" { 'test -n "$(jj diff --summary)"' } else if path_exists(".git") == "true" { 'test -n "$(git status --porcelain)"' } else { 'false' }
+PRE_COMMIT := if path_exists(".jj") == "true" { ":" } else if path_exists(".git") == "true" { "git add -A" } else { ":" }
+AT_COMMIT := if path_exists(".jj") == "true" { "jj desc -m" } else if path_exists(".git") == "true" { "git commit -m" } else { ":" }
+POST_COMMIT := if path_exists(".jj") == "true" { "jj new" } else { ":" }
+
 _default:
     @just --choose
 
@@ -53,7 +58,7 @@ check: format
 
 [doc("Fix lint warnings automatically (safely)")]
 [group("housekeeping")]
-fix: format && format
+fix: format
     cargo machete --fix
     cargo clippy --fix --allow-dirty --allow-staged --workspace
 
@@ -71,6 +76,14 @@ bench Y=YEAR D=DAY:
 [group("puzzle")]
 run Y=YEAR D=DAY:
     cargo run -r -p y{{ Y }}d{{ D }}
+
+[doc("Check, test and then commit the solution to VCS")]
+[group("puzzle")]
+commit Y=YEAR D=DAY: (test Y D) check
+    {{ HAS_CHANGES }} || (echo "No changes to commit"; exit 1)
+    {{ PRE_COMMIT }}
+    {{ AT_COMMIT }} "feat: Solution Year {{ Y }} Day {{ D }}"
+    {{ POST_COMMIT }}
 
 [doc("Create a new day's puzzle scaffold")]
 [group("scaffold")]
