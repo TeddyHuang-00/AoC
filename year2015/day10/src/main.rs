@@ -5,7 +5,7 @@ type Uint = u32;
 
 #[derive(Clone, Copy)]
 struct Count {
-    digit: Uint,
+    digit: u8,
     number: Uint,
 }
 
@@ -13,28 +13,11 @@ impl Count {
     const fn inc(&mut self) {
         self.number += 1;
     }
-
-    fn as_digits(count: Self) -> Vec<Uint> {
-        count.into()
-    }
 }
 
-impl From<Uint> for Count {
-    fn from(digit: Uint) -> Self {
+impl From<u8> for Count {
+    fn from(digit: u8) -> Self {
         Self { digit, number: 1 }
-    }
-}
-
-impl From<Count> for Vec<Uint> {
-    fn from(mut count: Count) -> Self {
-        let mut digits = vec![];
-        while count.number > 0 {
-            digits.push(count.number % 10);
-            count.number /= 10;
-        }
-        digits.reverse();
-        digits.push(count.digit);
-        digits
     }
 }
 
@@ -43,7 +26,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn append_to_counting(mut counts: Vec<Count>, digit: Uint) -> Vec<Count> {
+    fn append_to_counting(counts: &mut Vec<Count>, digit: u8) {
         if let Some(cnt) = counts.last_mut()
             && cnt.digit == digit
         {
@@ -51,19 +34,30 @@ impl Puzzle {
         } else {
             counts.push(digit.into());
         }
-        counts
     }
 
     fn look_and_say<A>(counts: A) -> Vec<Count>
     where
         A: AsRef<[Count]>,
     {
-        counts
-            .as_ref()
-            .iter()
-            .copied()
-            .flat_map(Count::as_digits)
-            .fold(vec![], Self::append_to_counting)
+        let mut out = Vec::with_capacity(counts.as_ref().len() * 2);
+
+        counts.as_ref().iter().copied().for_each(|mut count| {
+            let mut buf = [0; 10];
+            let mut idx = 0;
+            while count.number > 0 {
+                buf[idx] = (count.number % 10) as u8;
+                count.number /= 10;
+                idx += 1;
+            }
+            buf[0..idx]
+                .iter()
+                .rev()
+                .for_each(|&x| Self::append_to_counting(&mut out, x));
+            Self::append_to_counting(&mut out, count.digit);
+        });
+
+        out
     }
 }
 
@@ -73,10 +67,16 @@ impl Solution for Puzzle {
             .trim()
             .chars()
             .map(|c| {
-                c.to_digit(10)
-                    .unwrap_or_else(|| panic!("Invalid input: {c}")) as Uint
+                u8::try_from(
+                    c.to_digit(10)
+                        .unwrap_or_else(|| panic!("Invalid input: {c}")),
+                )
+                .unwrap_or_else(|_| unreachable!("Single char will never exceed u8"))
             })
-            .fold(vec![], Self::append_to_counting);
+            .fold(vec![], |mut acc, ch| {
+                Self::append_to_counting(&mut acc, ch);
+                acc
+            });
         Ok(Self { counts: digits })
     }
 
