@@ -279,3 +279,12 @@ dependencies = [
  "anyhow",
  "util",
 ]
+
+[[package]]
+name = "y2015d12"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "nom",
+ "util",
+]
