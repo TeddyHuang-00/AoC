@@ -288,3 +288,15 @@ dependencies = [
  "nom",
  "util",
 ]
+
+[[package]]
+name = "y2015d13"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "itertools",
+ "ndarray",
+ "nom",
+ "rayon",
+ "util",
+]
