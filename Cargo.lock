@@ -300,3 +300,13 @@ dependencies = [
  "rayon",
  "util",
 ]
+
+[[package]]
+name = "y2015d14"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "nom",
+ "rayon",
+ "util",
+]
