@@ -42,6 +42,7 @@ _default:
 [doc("Format all code and sort Cargo.toml files")]
 [group("housekeeping")]
 format:
+    fd -t f -E target -E template -g "*.rs" -x sed -i -E "\#^[[:space:]]*// (TEMPLATE):#d"
     cargo +nightly fmt --all
     cargo autoinherit --prefer-simple-dotted
     cargo sort --workspace
