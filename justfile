@@ -39,10 +39,12 @@ POST_COMMIT := if path_exists(".jj") == "true" { "jj new" } else { ":" }
 _default:
     @just --choose
 
+_strip:
+    fd -t f -E target -E template -g "*.rs" -x sed -i -E "\#^[[:space:]]*// (TEMPLATE):#d"
+
 [doc("Format all code and sort Cargo.toml files")]
 [group("housekeeping")]
 format:
-    fd -t f -E target -E template -g "*.rs" -x sed -i -E "\#^[[:space:]]*// (TEMPLATE):#d"
     cargo +nightly fmt --all
     cargo autoinherit --prefer-simple-dotted
     cargo sort --workspace
@@ -59,7 +61,7 @@ check: format
 
 [doc("Fix lint warnings automatically (safely)")]
 [group("housekeeping")]
-fix: format
+fix: _strip && format
     code=0; cargo machete --fix --with-metadata || code=$?; case $code in 0|1) exit 0;; *) exit 1;; esac
     cargo clippy --fix --allow-dirty --allow-staged --workspace
 
