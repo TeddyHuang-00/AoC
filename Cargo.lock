@@ -398,3 +398,14 @@ dependencies = [
  "nom",
  "util",
 ]
+
+[[package]]
+name = "y2015d24"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "itertools",
+ "nom",
+ "rayon",
+ "util",
+]
