@@ -114,6 +114,41 @@ macro_rules! impl_arith {
     };
 }
 
+macro_rules! impl_custom_op {
+    ($T:ty, $($vars:ident),+ $(,)?) => {
+        paste! {
+            impl<T> [<$T>]<T>
+            {
+                pub fn mapv<F, O>(self, func: F) -> [<$T>]<O>
+                where
+                    F: Fn(T) -> O
+                {
+                    [<$T>] {
+                        $(
+                            $vars: func(self.$vars),
+                        )+
+                    }
+                }
+
+                pub fn zip<U>(self, other: [<$T>]<U>) -> [<$T>]<(T, U)> {
+                    [<$T>] {
+                        $(
+                            $vars: (self.$vars, other.$vars),
+                        )+
+                    }
+                }
+
+                pub fn op<F, U, O>(self, other: [<$T>]<U>, func: F) -> [<$T>]<O>
+                where
+                    F: Fn((T, U)) -> O
+                {
+                    self.zip(other).mapv(func)
+                }
+            }
+        }
+    };
+}
+
 macro_rules! impl_vector {
     ($ndim:literal, $($vars:ident),+ $(,)?) => {
         paste! {
@@ -127,6 +162,7 @@ macro_rules! impl_vector {
             impl_new!([<Vector $ndim D>], $($vars),+);
             impl_array!([<Vector $ndim D>], $ndim, $($vars),+);
             impl_arith!([<Vector $ndim D>], $($vars),+);
+            impl_custom_op!([<Vector $ndim D>], $($vars),+);
         }
     };
 }
