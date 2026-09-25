@@ -26,3 +26,7 @@ Key directories and files:
 ## License
 
 This project is licensed under the MIT OR Apache-2.0 License. See the [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE) files for details.
+
+## 2015
+
+![Summary of year 2015](./figure/year2015.svg)

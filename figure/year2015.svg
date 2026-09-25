@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480"><path fill="#fff" d="M0 0h640v480H0z"/><text x="320" y="10" dy=".76em" font-family="sans-serif" font-size="24.194" text-anchor="middle">
+Run time
+</text><path stroke="#000" d="M45 439h589M45 424h589m-589-8h589m-589-7h589m-589-4h589m-589-4h589m-589-4h589m-589-3h589m-589-2h589m-589-3h589m-589 0h589M45 374h589m-589-8h589m-589-7h589m-589-4h589m-589-4h589m-589-4h589m-589-3h589m-589-2h589m-589-3h589m-589 0h589M45 324h589m-589-8h589m-589-7h589m-589-4h589m-589-4h589m-589-4h589m-589-3h589m-589-2h589m-589-3h589m-589 0h589M45 274h589m-589-8h589m-589-7h589m-589-4h589m-589-4h589m-589-4h589m-589-3h589m-589-2h589m-589-3h589m-589 0h589M45 224h589m-589-8h589m-589-7h589m-589-4h589m-589-4h589m-589-4h589m-589-3h589m-589-2h589m-589-3h589m-589 0h589M45 174h589m-589-8h589m-589-7h589m-589-4h589m-589-4h589m-589-4h589m-589-3h589m-589-2h589m-589-3h589m-589 0h589M45 124h589m-589-8h589m-589-7h589m-589-4h589m-589-4h589M45 97h589M45 94h589M45 92h589M45 89h589M45 89h589M45 74h589M45 66h589M45 59h589M45 55h589M45 51h589M45 47h589M45 44h589M45 42h589M45 39h589M45 39h589" opacity=".1"/><text x="5" y="239" dy=".76em" font-family="sans-serif" font-size="12.097" text-anchor="middle" transform="rotate(270 5 239)">
+Time
+</text><text x="340" y="475" dy="-.5ex" font-family="sans-serif" font-size="12.097" text-anchor="middle">
+Day
+</text><path stroke="#e0e0e0" d="M45 439h589M45 389h589M45 339h589M45 289h589M45 239h589M45 189h589M45 139h589M45 89h589M45 39h589"/><path fill="none" stroke="#000" d="M44 39v400"/><text x="35" y="439" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+1ns
+</text><path fill="none" stroke="#000" d="M39 439h5"/><text x="35" y="389" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+10ns
+</text><path fill="none" stroke="#000" d="M39 389h5"/><text x="35" y="339" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+100ns
+</text><path fill="none" stroke="#000" d="M39 339h5"/><text x="35" y="289" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+1µs
+</text><path fill="none" stroke="#000" d="M39 289h5"/><text x="35" y="239" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+10µs
+</text><path fill="none" stroke="#000" d="M39 239h5"/><text x="35" y="189" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+100µs
+</text><path fill="none" stroke="#000" d="M39 189h5"/><text x="35" y="139" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+1ms
+</text><path fill="none" stroke="#000" d="M39 139h5"/><text x="35" y="89" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+10ms
+</text><path fill="none" stroke="#000" d="M39 89h5"/><text x="35" y="39" dy=".5ex" font-family="sans-serif" font-size="9.677" text-anchor="end">
+100ms
+</text><path fill="none" stroke="#000" d="M39 39h5m1 401h589"/><text x="45" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+
+</text><path fill="none" stroke="#000" d="M45 440v5"/><text x="67" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+1
+</text><path fill="none" stroke="#000" d="M67 440v5"/><text x="90" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+2
+</text><path fill="none" stroke="#000" d="M90 440v5"/><text x="112" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+3
+</text><path fill="none" stroke="#000" d="M112 440v5"/><text x="135" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+4
+</text><path fill="none" stroke="#000" d="M135 440v5"/><text x="158" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+5
+</text><path fill="none" stroke="#000" d="M158 440v5"/><text x="180" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+6
+</text><path fill="none" stroke="#000" d="M180 440v5"/><text x="203" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+7
+</text><path fill="none" stroke="#000" d="M203 440v5"/><text x="226" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+8
+</text><path fill="none" stroke="#000" d="M226 440v5"/><text x="248" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+9
+</text><path fill="none" stroke="#000" d="M248 440v5"/><text x="271" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+10
+</text><path fill="none" stroke="#000" d="M271 440v5"/><text x="294" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+11
+</text><path fill="none" stroke="#000" d="M294 440v5"/><text x="316" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+12
+</text><path fill="none" stroke="#000" d="M316 440v5"/><text x="339" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+13
+</text><path fill="none" stroke="#000" d="M339 440v5"/><text x="362" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+14
+</text><path fill="none" stroke="#000" d="M362 440v5"/><text x="384" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+15
+</text><path fill="none" stroke="#000" d="M384 440v5"/><text x="407" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+16
+</text><path fill="none" stroke="#000" d="M407 440v5"/><text x="430" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+17
+</text><path fill="none" stroke="#000" d="M430 440v5"/><text x="452" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+18
+</text><path fill="none" stroke="#000" d="M452 440v5"/><text x="475" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+19
+</text><path fill="none" stroke="#000" d="M475 440v5"/><text x="498" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+20
+</text><path fill="none" stroke="#000" d="M498 440v5"/><text x="520" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+21
+</text><path fill="none" stroke="#000" d="M520 440v5"/><text x="543" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+22
+</text><path fill="none" stroke="#000" d="M543 440v5"/><text x="566" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+23
+</text><path fill="none" stroke="#000" d="M566 440v5"/><text x="588" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+24
+</text><path fill="none" stroke="#000" d="M588 440v5"/><text x="611" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+25
+</text><path fill="none" stroke="#000" d="M611 440v5"/><text x="634" y="450" dy=".76em" font-family="sans-serif" font-size="9.677" text-anchor="middle">
+
+</text><path fill="none" stroke="#000" d="M634 440v5"/><path fill="#0082c8" d="M194 197h6v242h-6zm385 131h6v111h-6zm-90 46h6v65h-6zm22-15h6v80h-6zm-45-66h6v146h-6zM81 239h6v200h-6zm90 3h6v197h-6zm136-84h6v281h-6zm-22 197h6v84h-6zm-46-87h6v171h-6zM58 238h6v201h-6zm317 69h6v132h-6zm68-105h6v237h-6zm91 164h6v73h-6zm-408 8h6v65h-6zm-23-148h6v213h-6zm453 75h7v138h-7zm-407-82h6v220h-6zm68 2h6v218h-6zm181-20h6v238h-6zm-68 51h6v187h-6zm272 80h6v107h-6zm-249-22h6v129h-6zm68 26h6v103h-6zm-159 15h6v88h-6z"/><path fill="#f58230" d="M200 197h6v242h-6zM585 40h6v399h-6zm-90 9h6v390h-6zm22 117h6v273h-6zm-45 3h6v270h-6zM87 212h6v227h-6zm90-142h6v369h-6zm136 167h6v202h-6zm-22-49h6v251h-6zm-46-78h6v329h-6zM64 203h6v236h-6zM381 43h6v396h-6zm68 22h6v374h-6zm91 31h6v343h-6zm-408-9h6v352h-6zm-23 95h6v257h-6zm454 112h6v145h-6zm-408-87h6v232h-6zm68 167h6v65h-6zm181-82h6v147h-6zM336 82h6v357h-6zm272-25h6v382h-6zM359 366h6v73h-6zm68-137h6v210h-6zM268 129h6v310h-6z"/><path fill="#911eb4" d="M206 181h6v258h-6zm385-75h6v333h-6zm-90-58h6v391h-6zm22 117h6v274h-6zm-45 84h6v190h-6zM93 212h6v227h-6zm90-142h6v369h-6zm136 176h6v193h-6zm-22-142h6v335h-6zm-46 6h6v329h-6zM70 297h6v142h-6zM387 43h6v396h-6zm68 24h6v372h-6zm91-6h6v378h-6zm-408-4h6v382h-6zm-23 123h7v259h-7zm454 105h6v154h-6zm-408-82h6v236h-6zm68 171h6v65h-6zm181-85h6v150h-6zM342 89h6v350h-6zm272 285h6v65h-6zM365 198h6v241h-6zm68 4h6v237h-6zM274 72h6v367h-6z"/><path fill="#fff" d="M50 44h75v59H50z" opacity=".5"/><path fill="none" stroke="#000" d="M50 44h75v59H50z"/><text x="90" y="54" dy=".76em" font-family="sans-serif" font-size="9.677">
+Parse
+</text><text x="90" y="69" dy=".76em" font-family="sans-serif" font-size="9.677">
+Part 1
+</text><text x="90" y="84" dy=".76em" font-family="sans-serif" font-size="9.677">
+Part 2
+</text><path fill="#0082c8" d="M60 55h20v6H60z"/><path fill="#f58230" d="M60 70h20v6H60z"/><path fill="#911eb4" d="M60 85h20v6H60z"/></svg>
