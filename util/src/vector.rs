@@ -57,6 +57,21 @@ macro_rules! impl_arith {
                 }
             }
 
+            impl<T> std::ops::$trait<T> for [<$T>]<T>
+            where
+                T: std::ops::$trait<Output = T> + Clone,
+            {
+                type Output = Self;
+
+                fn $fn(self, rhs: T) -> Self::Output {
+                    Self {
+                        $(
+                            $vars: self.$vars.$fn(rhs.clone()),
+                        )+
+                    }
+                }
+            }
+
             impl<T> std::ops::[<$trait Assign>] for [<$T>]<T>
             where
                 T: std::ops::[<$trait Assign>],
@@ -64,6 +79,17 @@ macro_rules! impl_arith {
                 fn [<$fn _assign>](&mut self, rhs: Self) {
                     $(
                         self.$vars.[<$fn _assign>](rhs.$vars);
+                    )+
+                }
+            }
+
+            impl<T> std::ops::[<$trait Assign>]<T> for [<$T>]<T>
+            where
+                T: std::ops::[<$trait Assign>] + Clone,
+            {
+                fn [<$fn _assign>](&mut self, rhs: T) {
+                    $(
+                        self.$vars.[<$fn _assign>](rhs.clone());
                     )+
                 }
             }
