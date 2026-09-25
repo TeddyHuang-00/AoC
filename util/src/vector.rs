@@ -16,7 +16,7 @@ macro_rules! impl_new {
     };
 }
 
-macro_rules! impl_as_arr {
+macro_rules! impl_array {
     ($T:ty, $cnt:literal, $($vars:ident),+ $(,)?) => {
         paste! {
             impl<T> [<$T>]<T>
@@ -27,6 +27,23 @@ macro_rules! impl_as_arr {
                     [$(
                         self.$vars,
                     )+]
+                }
+            }
+
+            impl<T> From<[<$T>]<T>> for [T; $cnt] {
+                fn from(value: [<$T>]<T>) -> [T; $cnt] {
+                    [$(
+                        value.$vars,
+                    )+]
+                }
+            }
+
+            impl<T> From<[T; $cnt]> for [<$T>]<T> {
+                fn from(value: [T; $cnt]) -> [<$T>]<T> {
+                    let [$($vars,)+] = value;
+                    Self {
+                        $($vars,)+
+                    }
                 }
             }
         }
@@ -108,7 +125,7 @@ macro_rules! impl_vector {
             }
 
             impl_new!([<Vector $ndim D>], $($vars),+);
-            impl_as_arr!([<Vector $ndim D>], $ndim, $($vars),+);
+            impl_array!([<Vector $ndim D>], $ndim, $($vars),+);
             impl_arith!([<Vector $ndim D>], $($vars),+);
         }
     };
