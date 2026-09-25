@@ -47,7 +47,7 @@ _strip:
 format:
     cargo +nightly fmt --all
     cargo autoinherit --prefer-simple-dotted
-    cargo sort --workspace
+    cargo sort --workspace > /dev/null 2>&1
     cargo sort-derives
     just --fmt --unstable
 
@@ -56,29 +56,29 @@ format:
 check: format
     typos **/*.rs
     cargo machete
-    cargo check --all --workspace
-    cargo clippy --workspace
+    cargo check --all --workspace --quiet
+    cargo clippy --workspace --quiet
 
 [doc("Fix lint warnings automatically (safely)")]
 [group("housekeeping")]
 fix: _strip && format
     code=0; cargo machete --fix --with-metadata || code=$?; case $code in 0|1) exit 0;; *) exit 1;; esac
-    cargo clippy --fix --allow-dirty --allow-staged --workspace
+    cargo clippy --fix --allow-dirty --allow-staged --workspace --quiet
 
 [doc("Run tests for a specific day's puzzle with example input")]
 [group("puzzle")]
 test Y=YEAR D=DAY:
-    cargo test -p y{{ Y }}d{{ D }} "test_" -- --no-capture
+    cargo test -p y{{ Y }}d{{ D }} "test_" --quiet -- --no-capture
 
 [doc("Run the benchmark for a specific day's puzzle and record performance")]
 [group("puzzle")]
 bench Y=YEAR D=DAY:
-    cargo test -r -p y{{ Y }}d{{ D }} "benchmark" -- --no-capture --test-threads 1
+    cargo test -r -p y{{ Y }}d{{ D }} "benchmark" --quiet -- --no-capture --test-threads 1
 
 [doc("Run the solution for a specific day's puzzle with actual input")]
 [group("puzzle")]
 run Y=YEAR D=DAY:
-    cargo run -r -p y{{ Y }}d{{ D }}
+    cargo run -r -p y{{ Y }}d{{ D }} --quiet
 
 [doc("Check, test and then commit the solution to VCS")]
 [group("puzzle")]
