@@ -1,0 +1,13 @@
+name: "Prepare placeholder files"
+description: "Add back some ignored file for proper compilation"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create files
+      run: |
+        shopt -s nullglob
+        for dir in year*/day*/; do
+          touch "${dir%/}"/{example,puzzle}.{in,out}
+        done
+      shell: bash

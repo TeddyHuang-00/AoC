@@ -1,0 +1,37 @@
+name: Check and Test Build
+on:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
+  workflow_dispatch:
+
+jobs:
+  format:
+    name: code format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/prepare
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
+
+      - name: Run Rustfmt
+        run: cargo +nightly fmt --all -- --check
+
+  check:
+    name: clippy check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/prepare
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: sudo apt install pkg-config libfreetype6-dev libfontconfig1-dev
+
+      - name: Run Clippy
+        run: cargo clippy --workspace -- -D warnings
