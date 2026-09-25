@@ -104,3 +104,7 @@ new-year Y=NEXT_YEAR:
     -rm -rf year{{ Y }}
     mkdir year{{ Y }}
     @just new-day {{ Y }} 01
+
+[doc("Summarize all solutions of a year")]
+summary Y=YEAR: (bench Y "*")
+    AOC_YEAR={{ Y }} cargo r -r --bin summary

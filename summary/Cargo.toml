@@ -1,0 +1,12 @@
+[package]
+name = "summary"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow.workspace = true
+nom.workspace = true
+plotters.workspace = true
+
+[lints]
+workspace = true
