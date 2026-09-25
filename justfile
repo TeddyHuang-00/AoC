@@ -73,7 +73,7 @@ test Y=YEAR D=DAY:
 [doc("Run the benchmark for a specific day's puzzle and record performance")]
 [group("puzzle")]
 bench Y=YEAR D=DAY:
-    cargo test -r -p y{{ Y }}d{{ D }} "benchmark" -- --no-capture
+    cargo test -r -p y{{ Y }}d{{ D }} "benchmark" -- --no-capture --test-threads 1
 
 [doc("Run the solution for a specific day's puzzle with actual input")]
 [group("puzzle")]
