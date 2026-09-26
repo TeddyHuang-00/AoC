@@ -105,6 +105,11 @@ new-year Y=NEXT_YEAR:
     mkdir year{{ Y }}
     @just new-day {{ Y }} 01
 
+[doc("Add dependecies to current year and day's solution")]
+[group("scaffold")]
+add +PACKAGES:
+    cargo add -p y{{ YEAR }}d{{ DAY }} {{ PACKAGES }}
+
 [doc("Summarize all solutions of a year")]
 summary Y=YEAR: (bench Y "*")
     AOC_YEAR={{ Y }} cargo r -r --bin summary
