@@ -1330,6 +1330,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "y2016d08"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ndarray",
+ "nom",
+ "util",
+]
+
+[[package]]
 name = "yeslogic-fontconfig-sys"
 version = "6.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
