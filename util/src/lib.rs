@@ -1,5 +1,6 @@
 //! Utilities for Advent of Code challenges
 
+pub mod hash;
 pub mod parser;
 pub mod timer;
 pub mod vector;

@@ -23,6 +23,7 @@ const CONSTANTS: [u32; 64] = [
 ];
 
 #[allow(clippy::many_single_char_names)]
+#[must_use]
 pub fn digest(message: &[u8]) -> [u8; 16] {
     // Initialize variables
     #[allow(clippy::unreadable_literal)]

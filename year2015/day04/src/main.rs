@@ -1,8 +1,6 @@
 use anyhow::Result;
 use rayon::prelude::*;
-use util::{Solution, chore};
-
-mod md5;
+use util::{Solution, chore, hash::md5};
 
 struct Puzzle {
     seed: String,
