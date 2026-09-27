@@ -8,6 +8,7 @@ use nom::{
     number::complete::double,
     sequence::{preceded, separated_pair},
 };
+use util::float_as_key;
 
 #[derive(Clone, Copy, Debug)]
 pub enum Scale {
@@ -34,25 +35,7 @@ pub struct Timing {
     pub scale: Scale,
 }
 
-impl PartialEq for Timing {
-    fn eq(&self, other: &Self) -> bool {
-        self.median == other.median
-    }
-}
-
-impl Eq for Timing {}
-
-impl PartialOrd for Timing {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Timing {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.median.total_cmp(&other.median)
-    }
-}
+float_as_key!(Timing, median);
 
 fn parse_time(input: &str) -> IResult<&str, (f64, Scale)> {
     (
