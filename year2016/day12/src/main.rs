@@ -10,7 +10,7 @@ use nom::{
 };
 use util::{Solution, chore, parser};
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Eq, PartialEq)]
 enum Register {
     A,
     B,
@@ -38,15 +38,19 @@ struct Registers {
 }
 
 impl Registers {
-    const fn get(&self, rnn: RegisterOrNumber) -> i32 {
+    const fn get(&self, r: Register) -> i32 {
+        self.registers[r as usize]
+    }
+
+    const fn get_or_number(&self, rnn: RegisterOrNumber) -> i32 {
         match rnn {
-            RegisterOrNumber::Register(r) => self.registers[r as usize],
+            RegisterOrNumber::Register(r) => self.get(r),
             RegisterOrNumber::Number(n) => n,
         }
     }
 
-    const fn set(&mut self, r: Register, rnn: RegisterOrNumber) {
-        self.registers[r as usize] = self.get(rnn);
+    const fn set(&mut self, r: Register, n: i32) {
+        self.registers[r as usize] = n;
     }
 
     const fn inc(&mut self, r: Register) {
@@ -111,16 +115,164 @@ impl Puzzle {
         .parse_complete(input)
     }
 
+    fn try_for_loop(
+        instructions: &[Instruction],
+        registers: &mut Registers,
+        ptr: &mut usize,
+    ) -> bool {
+        match *instructions {
+            [
+                a,
+                b,
+                Instruction::JumpNotZero(RegisterOrNumber::Register(cond), -2),
+            ] if matches!(b, Instruction::Decrease(r) | Instruction::Increase(r) if cond == r)
+                && matches!(a, Instruction::Increase(_) | Instruction::Decrease(_))
+                || matches!(a, Instruction::Decrease(r) | Instruction::Increase(r) if cond == r)
+                    && matches!(b, Instruction::Decrease(_) | Instruction::Increase(_)) =>
+            {
+                let num_loops = registers.get(cond).abs();
+                registers.set(cond, 0);
+
+                let other = if matches!(a, Instruction::Decrease(r) | Instruction::Increase(r) if cond == r)
+                {
+                    b
+                } else {
+                    a
+                };
+                match other {
+                    Instruction::Increase(r) => {
+                        registers.registers[r as usize] += num_loops;
+                    }
+                    Instruction::Decrease(r) => {
+                        registers.registers[r as usize] -= num_loops;
+                    }
+                    _ => unreachable!(),
+                }
+
+                *ptr += 3;
+                true
+            }
+            _ => {
+                // Do nothing.
+                false
+            }
+        }
+    }
+
+    fn try_nested_for_loop(
+        instructions: &[Instruction],
+        registers: &mut Registers,
+        ptr: &mut usize,
+    ) -> bool {
+        match *instructions {
+            [
+                reset,
+                a,
+                b,
+                Instruction::JumpNotZero(RegisterOrNumber::Register(cond), -2),
+                c,
+                Instruction::JumpNotZero(RegisterOrNumber::Register(other), -5),
+            ] if matches!(b, Instruction::Decrease(r) | Instruction::Increase(r) if cond == r)
+                && matches!(a, Instruction::Increase(_) | Instruction::Decrease(_))
+                && matches!(reset, Instruction::Copy(_, r) if cond == r)
+                && matches!(c, Instruction::Decrease(r) | Instruction::Increase(r) if other == r) =>
+            {
+                let inner = match reset {
+                    Instruction::Copy(src, _) => registers.get_or_number(src),
+                    _ => unreachable!(),
+                };
+                let outer = registers.get(other).abs();
+                registers.set(cond, 0);
+                registers.set(other, 0);
+                match a {
+                    Instruction::Increase(r) => {
+                        registers.registers[r as usize] += inner * outer;
+                    }
+                    Instruction::Decrease(r) => {
+                        registers.registers[r as usize] -= inner * outer;
+                    }
+                    _ => unreachable!(),
+                }
+
+                *ptr += 6;
+                true
+            }
+            [
+                reset,
+                a,
+                b,
+                Instruction::JumpNotZero(RegisterOrNumber::Register(cond), -2),
+                copy,
+                c,
+                Instruction::JumpNotZero(RegisterOrNumber::Register(other), -5),
+            ] if matches!(b, Instruction::Decrease(r) | Instruction::Increase(r) if cond == r)
+                && matches!(a, Instruction::Increase(_) | Instruction::Decrease(_))
+                && matches!((reset, copy), (Instruction::Copy(_, r1), Instruction::Copy(RegisterOrNumber::Register(r2), r3)) if cond == r3 && r1 == r2)
+                && matches!(c, Instruction::Decrease(r) | Instruction::Increase(r) if other == r) =>
+            {
+                let inner = match reset {
+                    Instruction::Copy(src, dst) => {
+                        let val = registers.get_or_number(src);
+                        registers.registers[dst as usize] = val;
+                        val
+                    }
+                    _ => unreachable!(),
+                };
+                let outer = registers.get(other).abs();
+                registers.set(cond, inner);
+                registers.set(other, 0);
+                match a {
+                    Instruction::Increase(r) => {
+                        registers.registers[r as usize] += inner * outer;
+                    }
+                    Instruction::Decrease(r) => {
+                        registers.registers[r as usize] -= inner * outer;
+                    }
+                    _ => unreachable!(),
+                }
+
+                *ptr += 7;
+                true
+            }
+            _ => {
+                // Do nothing.
+                false
+            }
+        }
+    }
+
     fn execute(&self, mut registers: Registers) -> Registers {
         let mut ptr = 0;
 
         while ptr < self.instructions.len() {
+            if ptr + 7 <= self.instructions.len()
+                && Self::try_nested_for_loop(
+                    &self.instructions[ptr..ptr + 7],
+                    &mut registers,
+                    &mut ptr,
+                )
+                || ptr + 6 <= self.instructions.len()
+                    && Self::try_nested_for_loop(
+                        &self.instructions[ptr..ptr + 6],
+                        &mut registers,
+                        &mut ptr,
+                    )
+                || ptr + 3 <= self.instructions.len()
+                    && Self::try_for_loop(
+                        &self.instructions[ptr..ptr + 3],
+                        &mut registers,
+                        &mut ptr,
+                    )
+            {
+                continue;
+            }
+
             match self.instructions[ptr] {
-                Instruction::Copy(x, y) => registers.set(y, x),
+                Instruction::Copy(x, y) => registers.set(y, registers.get_or_number(x)),
                 Instruction::Increase(x) => registers.inc(x),
                 Instruction::Decrease(x) => registers.dec(x),
                 Instruction::JumpNotZero(x, y) => {
-                    if registers.get(x) != 0 {
+                    if registers.get_or_number(x) != 0 {
                         ptr = ptr.wrapping_add_signed(y);
                         continue;
                     }
@@ -142,18 +294,14 @@ impl Solution for Puzzle {
 
     fn part1(&self) -> String {
         let registers = self.execute(Registers::default());
-        registers
-            .get(RegisterOrNumber::Register(Register::A))
-            .to_string()
+        registers.get(Register::A).to_string()
     }
 
     fn part2(&self) -> String {
         let mut registers = Registers::default();
-        registers.set(Register::C, RegisterOrNumber::Number(1));
+        registers.set(Register::C, 1);
         registers = self.execute(registers);
-        registers
-            .get(RegisterOrNumber::Register(Register::A))
-            .to_string()
+        registers.get(Register::A).to_string()
     }
 }
 
