@@ -115,12 +115,12 @@ impl Puzzle {
         .parse_complete(input)
     }
 
-    fn try_for_loop(
-        instructions: &[Instruction],
+    fn try_add_sub(
+        instructions: [Instruction; 3],
         registers: &mut Registers,
         ptr: &mut usize,
     ) -> bool {
-        match *instructions {
+        match instructions {
             [
                 a,
                 b,
@@ -140,12 +140,8 @@ impl Puzzle {
                     a
                 };
                 match other {
-                    Instruction::Increase(r) => {
-                        registers.registers[r as usize] += num_loops;
-                    }
-                    Instruction::Decrease(r) => {
-                        registers.registers[r as usize] -= num_loops;
-                    }
+                    Instruction::Increase(r) => registers.set(r, registers.get(r) + num_loops),
+                    Instruction::Decrease(r) => registers.set(r, registers.get(r) - num_loops),
                     _ => unreachable!(),
                 }
 
@@ -159,12 +155,12 @@ impl Puzzle {
         }
     }
 
-    fn try_nested_for_loop(
-        instructions: &[Instruction],
+    fn try_multiply(
+        instructions: [Instruction; 6],
         registers: &mut Registers,
         ptr: &mut usize,
     ) -> bool {
-        match *instructions {
+        match instructions {
             [
                 reset,
                 a,
@@ -185,18 +181,27 @@ impl Puzzle {
                 registers.set(cond, 0);
                 registers.set(other, 0);
                 match a {
-                    Instruction::Increase(r) => {
-                        registers.registers[r as usize] += inner * outer;
-                    }
-                    Instruction::Decrease(r) => {
-                        registers.registers[r as usize] -= inner * outer;
-                    }
+                    Instruction::Increase(r) => registers.set(r, registers.get(r) + inner * outer),
+                    Instruction::Decrease(r) => registers.set(r, registers.get(r) - inner * outer),
                     _ => unreachable!(),
                 }
 
                 *ptr += 6;
                 true
             }
+            _ => {
+                // Do nothing.
+                false
+            }
+        }
+    }
+
+    fn try_multiply_with_leftover(
+        instructions: [Instruction; 7],
+        registers: &mut Registers,
+        ptr: &mut usize,
+    ) -> bool {
+        match instructions {
             [
                 reset,
                 a,
@@ -213,7 +218,7 @@ impl Puzzle {
                 let inner = match reset {
                     Instruction::Copy(src, dst) => {
                         let val = registers.get_or_number(src);
-                        registers.registers[dst as usize] = val;
+                        registers.set(dst, val);
                         val
                     }
                     _ => unreachable!(),
@@ -222,12 +227,8 @@ impl Puzzle {
                 registers.set(cond, inner);
                 registers.set(other, 0);
                 match a {
-                    Instruction::Increase(r) => {
-                        registers.registers[r as usize] += inner * outer;
-                    }
-                    Instruction::Decrease(r) => {
-                        registers.registers[r as usize] -= inner * outer;
-                    }
+                    Instruction::Increase(r) => registers.set(r, registers.get(r) + inner * outer),
+                    Instruction::Decrease(r) => registers.set(r, registers.get(r) - inner * outer),
                     _ => unreachable!(),
                 }
 
@@ -241,30 +242,45 @@ impl Puzzle {
         }
     }
 
+    fn try_optimized_loop(
+        instructions: &[Instruction],
+        registers: &mut Registers,
+        ptr: &mut usize,
+    ) -> bool {
+        match instructions {
+            ins if ins.len() == 7 => Self::try_multiply_with_leftover(
+                instructions.try_into().unwrap_or_else(|_| unreachable!()),
+                registers,
+                ptr,
+            ),
+            ins if ins.len() == 6 => Self::try_multiply(
+                instructions.try_into().unwrap_or_else(|_| unreachable!()),
+                registers,
+                ptr,
+            ),
+            ins if ins.len() == 3 => Self::try_add_sub(
+                instructions.try_into().unwrap_or_else(|_| unreachable!()),
+                registers,
+                ptr,
+            ),
+            _ => false,
+        }
+    }
+
     fn execute(&self, mut registers: Registers) -> Registers {
         let mut ptr = 0;
 
-        while ptr < self.instructions.len() {
-            if ptr + 7 <= self.instructions.len()
-                && Self::try_nested_for_loop(
-                    &self.instructions[ptr..ptr + 7],
-                    &mut registers,
-                    &mut ptr,
-                )
-                || ptr + 6 <= self.instructions.len()
-                    && Self::try_nested_for_loop(
-                        &self.instructions[ptr..ptr + 6],
+        'step: while ptr < self.instructions.len() {
+            for len in [7, 6, 3] {
+                if ptr + len <= self.instructions.len()
+                    && Self::try_optimized_loop(
+                        &self.instructions[ptr..ptr + len],
                         &mut registers,
                         &mut ptr,
                     )
-                || ptr + 3 <= self.instructions.len()
-                    && Self::try_for_loop(
-                        &self.instructions[ptr..ptr + 3],
-                        &mut registers,
-                        &mut ptr,
-                    )
-            {
-                continue;
+                {
+                    continue 'step;
+                }
             }
 
             match self.instructions[ptr] {

@@ -136,12 +136,12 @@ impl Puzzle {
         .parse_complete(input)
     }
 
-    fn try_for_loop(
-        instructions: &[Instruction],
+    fn try_add_sub(
+        instructions: [Instruction; 3],
         registers: &mut Registers,
         ptr: &mut usize,
     ) -> bool {
-        match *instructions {
+        match instructions {
             [
                 a,
                 b,
@@ -164,16 +164,12 @@ impl Puzzle {
                     a
                 };
                 match other {
-                    Instruction::Increase(r) => {
-                        registers.registers[r as usize] += num_loops;
-                    }
-                    Instruction::Decrease(r) => {
-                        registers.registers[r as usize] -= num_loops;
-                    }
+                    Instruction::Increase(r) => registers.set(r, registers.get(r) + num_loops),
+                    Instruction::Decrease(r) => registers.set(r, registers.get(r) - num_loops),
                     _ => unreachable!(),
                 }
 
-                *ptr += 3;
+                *ptr += instructions.len();
                 true
             }
             _ => {
@@ -183,12 +179,12 @@ impl Puzzle {
         }
     }
 
-    fn try_nested_for_loop(
-        instructions: &[Instruction],
+    fn try_multiply(
+        instructions: [Instruction; 6],
         registers: &mut Registers,
         ptr: &mut usize,
     ) -> bool {
-        match *instructions {
+        match instructions {
             [
                 reset,
                 a,
@@ -215,16 +211,12 @@ impl Puzzle {
                 registers.set(cond, 0);
                 registers.set(other, 0);
                 match a {
-                    Instruction::Increase(r) => {
-                        registers.registers[r as usize] += inner * outer;
-                    }
-                    Instruction::Decrease(r) => {
-                        registers.registers[r as usize] -= inner * outer;
-                    }
+                    Instruction::Increase(r) => registers.set(r, registers.get(r) + inner * outer),
+                    Instruction::Decrease(r) => registers.set(r, registers.get(r) - inner * outer),
                     _ => unreachable!(),
                 }
 
-                *ptr += 6;
+                *ptr += instructions.len();
                 true
             }
             _ => {
@@ -234,18 +226,44 @@ impl Puzzle {
         }
     }
 
+    fn try_optimized_loop(
+        instructions: &[Instruction],
+        registers: &mut Registers,
+        ptr: &mut usize,
+    ) -> bool {
+        match instructions {
+            ins if ins.len() == 6 => Self::try_multiply(
+                instructions.try_into().unwrap_or_else(|_| unreachable!()),
+                registers,
+                ptr,
+            ),
+            ins if ins.len() == 5 => Self::try_add_sub(
+                instructions.try_into().unwrap_or_else(|_| unreachable!()),
+                registers,
+                ptr,
+            ),
+            _ => false,
+        }
+    }
+
     fn execute(&self, mut registers: Registers) -> Registers {
         let mut instructions = self.instructions.clone();
         let mut ptr = 0;
-        while ptr < instructions.len() {
+        'step: while ptr < instructions.len() {
             // The code will run painfully slow without the for loop
             // optimizations.
-            if ptr + 6 <= instructions.len()
-                && Self::try_nested_for_loop(&instructions[ptr..ptr + 6], &mut registers, &mut ptr)
-                || ptr + 3 <= instructions.len()
-                    && Self::try_for_loop(&instructions[ptr..ptr + 3], &mut registers, &mut ptr)
-            {
-                continue;
+            for len in [6, 3] {
+                if ptr + len <= instructions.len()
+                    && Self::try_optimized_loop(
+                        instructions[ptr..ptr + len]
+                            .try_into()
+                            .unwrap_or_else(|_| unreachable!()),
+                        &mut registers,
+                        &mut ptr,
+                    )
+                {
+                    continue 'step;
+                }
             }
 
             match instructions[ptr] {
