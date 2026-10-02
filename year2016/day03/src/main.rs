@@ -58,7 +58,7 @@ impl Solution for Puzzle {
             .0
             .iter()
             .map(|t| {
-                let (a, b, c) = (t[0], t[1], t[2]);
+                let (a, b, c) = <(_, _, _)>::from(*t);
                 [
                     Triangle(a.0, b.0, c.0).is_valid(),
                     Triangle(a.1, b.1, c.1).is_valid(),

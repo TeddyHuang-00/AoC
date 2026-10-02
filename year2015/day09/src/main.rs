@@ -170,7 +170,7 @@ impl Solution for Puzzle {
             parser::parse_input_str(input, separated_list1(line_ending, Self::parse_pair))?;
         let node_idx = paired_distances
             .iter()
-            .flat_map(|pair| [pair.0.0, pair.0.1])
+            .flat_map(|pair| <[_; 2]>::from(pair.0))
             .fold(BTreeMap::new(), |mut acc, x| {
                 let len = acc.len();
                 acc.entry(x).or_insert_with(|| len);
