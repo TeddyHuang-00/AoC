@@ -136,7 +136,11 @@ impl Puzzle {
         .parse_complete(input)
     }
 
-    fn try_for_loop(instructions: &[Instruction], registers: &mut Registers, ptr: &mut usize) {
+    fn try_for_loop(
+        instructions: &[Instruction],
+        registers: &mut Registers,
+        ptr: &mut usize,
+    ) -> bool {
         match *instructions {
             [
                 a,
@@ -170,9 +174,11 @@ impl Puzzle {
                 }
 
                 *ptr += 3;
+                true
             }
             _ => {
                 // Do nothing.
+                false
             }
         }
     }
@@ -181,7 +187,7 @@ impl Puzzle {
         instructions: &[Instruction],
         registers: &mut Registers,
         ptr: &mut usize,
-    ) {
+    ) -> bool {
         match *instructions {
             [
                 reset,
@@ -219,9 +225,11 @@ impl Puzzle {
                 }
 
                 *ptr += 6;
+                true
             }
             _ => {
                 // Do nothing.
+                false
             }
         }
     }
@@ -232,15 +240,12 @@ impl Puzzle {
         while ptr < instructions.len() {
             // The code will run painfully slow without the for loop
             // optimizations.
-            if ptr + 6 <= instructions.len() {
-                Self::try_nested_for_loop(&instructions[ptr..ptr + 6], &mut registers, &mut ptr);
-            } else if ptr + 3 <= instructions.len() {
-                // Try match the nested for loops in asm
-                Self::try_for_loop(&instructions[ptr..ptr + 3], &mut registers, &mut ptr);
-            }
-
-            if ptr >= instructions.len() {
-                break;
+            if ptr + 6 <= instructions.len()
+                && Self::try_nested_for_loop(&instructions[ptr..ptr + 6], &mut registers, &mut ptr)
+                || ptr + 3 <= instructions.len()
+                    && Self::try_for_loop(&instructions[ptr..ptr + 3], &mut registers, &mut ptr)
+            {
+                continue;
             }
 
             match instructions[ptr] {
