@@ -2,6 +2,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use plotters::{prelude::*, style::full_palette::GREY_300};
+use rust_fontconfig::FcFontCache;
 
 use crate::parser::Timing;
 
@@ -19,9 +20,26 @@ pub fn plot_histogram<P>(
 where
     P: AsRef<Path>,
 {
+    // Get available fonts
+    let fc_cache = FcFontCache::build();
+    let font = if fc_cache
+        .list()
+        .into_iter()
+        .filter_map(|(pattern, _)| match &pattern.family {
+            Some(s) if s.to_lowercase().contains("maple mono nf cn") => Some(s.clone()),
+            _ => None,
+        })
+        .count()
+        > 0
+    {
+        "Maple Mono NF CN"
+    } else {
+        "sans-serif"
+    };
+
     let total_bar_width = 0.8;
     let bar_width = total_bar_width / 3.0;
-    let canvas_size = (640, 480);
+    let canvas_size = (720, 480);
 
     let root = SVGBackend::new(&path, canvas_size).into_drawing_area();
     root.fill(&WHITE)?;
@@ -48,14 +66,16 @@ where
         .x_label_area_size(35)
         .y_label_area_size(40)
         .margin(5)
-        .caption("Run time", ("sans-serif", 30.0))
+        .caption("Run time", (font, 24))
         .build_cartesian_2d(0f64..(max_x + 1) as f64, (1.0..max_y).log_scale())?;
 
     chart
         .configure_mesh()
         .disable_x_mesh()
         .bold_line_style(GREY_300)
+        .x_desc("Day")
         .x_labels(max_x + 2)
+        .x_label_style((font, 12))
         .x_label_formatter(&|x| {
             let idx = x.round() as usize;
             if idx > 0 && idx <= max_x {
@@ -64,7 +84,7 @@ where
                 String::new()
             }
         })
-        .y_desc("Time")
+        .y_label_style((font, 12))
         .y_label_formatter(&|x| match x.log10().round() as usize {
             0 => "1ns".to_string(),
             1 => "10ns".to_string(),
@@ -80,8 +100,7 @@ where
             11 => "100s".to_string(),
             _ => format!("{x:e}"),
         })
-        .x_desc("Day")
-        .axis_desc_style(("sans-serif", 15))
+        .axis_desc_style((font, 15))
         .draw()?;
 
     let getter = |(x, y, z), idx| match idx {
@@ -123,6 +142,7 @@ where
 
     chart
         .configure_series_labels()
+        .label_font((font, 15))
         .position(SeriesLabelPosition::UpperLeft)
         .background_style(WHITE.mix(0.5))
         .border_style(BLACK)
