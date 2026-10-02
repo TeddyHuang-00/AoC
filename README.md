@@ -27,6 +27,16 @@ Key directories and files:
 
 This project is licensed under the MIT OR Apache-2.0 License. See the [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE) files for details.
 
-## 2015
+## Performance
+
+Performance is not the focus of all solution, as some solutions are optimized for readability and/or generality over performance.
+
+However, I do try to optimize performance where possible, with goal total runtime within one or two seconds for each year.
+
+### 2015
 
 ![Summary of year 2015](./figure/year2015.svg)
+
+### 2016
+
+![Summary of year 2016](./figure/year2016.svg)
