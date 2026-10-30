@@ -35,7 +35,8 @@ impl Puzzle {
             char('"'),
             fold_many0(
                 alt((
-                    // Ignore normal characters, we only care about escape sequences
+                    // Ignore normal characters, we only care about escape
+                    // sequences
                     value(None, alphanumeric1),
                     value(Some(Escape::Backslash), tag("\\\\")),
                     value(Some(Escape::Quote), tag("\\\"")),

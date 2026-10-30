@@ -132,7 +132,8 @@ impl Puzzle {
                         |mut dist, (start, next, rest)| {
                             dist[usize::from(start)] = cmp(
                                 dist[usize::from(start)],
-                                // First go from start to next, then from next to traversal of rest
+                                // First go from start to next, then from next
+                                // to traversal of rest
                                 dp[dp_index(np![start, next], start)] + dp[dp_index(rest, next)],
                             );
                             dist
