@@ -10,7 +10,7 @@ use nom::{
 };
 use util::{Solution, chore, integer_as_key, parser};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 struct Filter {
     value: u32,
     cycle: u32,

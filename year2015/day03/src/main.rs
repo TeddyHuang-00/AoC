@@ -5,7 +5,7 @@ use util::{Solution, chore, vector::Vector2D};
 
 type Position = Vector2D<i32>;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 enum Direction {
     Up,
     Down,
