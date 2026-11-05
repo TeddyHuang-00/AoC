@@ -52,6 +52,22 @@ macro_rules! impl_array {
 
 macro_rules! impl_arith {
     ($T:ty, $($vars:ident),+ $(,)?) => {
+        paste! {
+            impl<T> std::ops::Neg for [<$T>]<T>
+            where
+                T: std::ops::Neg<Output = T>,
+            {
+                type Output = Self;
+
+                fn neg(self) -> Self::Output {
+                    Self {
+                        $(
+                            $vars: self.$vars.neg(),
+                        )+
+                    }
+                }
+            }
+        }
         impl_arith!(internal: Add, add, $T, $($vars),+);
         impl_arith!(internal: Sub, sub, $T, $($vars),+);
         impl_arith!(internal: Mul, mul, $T, $($vars),+);
