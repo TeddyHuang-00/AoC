@@ -3,5 +3,6 @@
 *.in
 *.out
 *.csv
+*.png
 
 /benchmarks
