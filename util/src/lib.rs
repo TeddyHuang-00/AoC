@@ -5,6 +5,7 @@
 mod macros;
 
 pub mod hash;
+pub mod hasher;
 pub mod parser;
 pub mod timer;
 pub mod vector;
