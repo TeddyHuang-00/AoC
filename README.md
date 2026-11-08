@@ -40,3 +40,7 @@ However, I do try to optimize performance where possible, with goal total runtim
 ### 2016
 
 ![Summary of year 2016](./figure/year2016.svg)
+
+### 2017
+
+![Summary of year 2017](./figure/year2017.svg)
