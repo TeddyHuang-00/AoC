@@ -1,8 +1,5 @@
 use anyhow::Result;
-use ndarray::{
-    parallel::prelude::{IntoParallelIterator, ParallelIterator},
-    prelude::*,
-};
+use ndarray::{parallel::prelude::*, prelude::*};
 use nom::{
     IResult, Parser,
     bytes::complete::tag,

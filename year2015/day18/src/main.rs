@@ -2,11 +2,7 @@ use std::fmt::{Display, Write};
 
 use anyhow::Result;
 use itertools::Itertools;
-use ndarray::{
-    Zip,
-    parallel::prelude::{IntoParallelIterator, ParallelIterator},
-    prelude::*,
-};
+use ndarray::{Zip, parallel::prelude::*, prelude::*};
 use nom::{
     IResult, Parser,
     branch::alt,
