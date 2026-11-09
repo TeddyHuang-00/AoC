@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashMap, hash_map::Entry},
-    hash::BuildHasherDefault,
-};
+use std::collections::hash_map::Entry;
 
 use anyhow::Result;
 use nom::{
@@ -11,7 +8,7 @@ use nom::{
     combinator::value,
     multi::{many1, separated_list1},
 };
-use util::{Solution, chore, hasher::FastHasher, parser, vector::Vector2D};
+use util::{Solution, chore, hasher::FxHashMap, parser, vector::Vector2D};
 
 #[derive(Clone, Copy, Default)]
 enum Direction {
@@ -104,7 +101,7 @@ impl Puzzle {
             .iter()
             .copied()
             .zip(std::iter::repeat(Stage::Infected))
-            .collect::<HashMap<_, _, BuildHasherDefault<FastHasher>>>();
+            .collect::<FxHashMap<_, _>>();
         let mut pos = Vector2D::new(0, 0);
         let mut dir = Direction::default();
         let mut counter = 0;

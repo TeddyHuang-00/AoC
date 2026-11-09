@@ -1,6 +1,13 @@
-use std::hash::Hasher;
+use std::{
+    collections::{HashMap, HashSet},
+    hash::{BuildHasherDefault, Hasher},
+};
 
 use paste::paste;
+
+pub type FxHash = BuildHasherDefault<FastHasher>;
+pub type FxHashMap<K, V> = HashMap<K, V, FxHash>;
+pub type FxHashSet<T> = HashSet<T, FxHash>;
 
 const HASH_K: u64 = 0x517c_c1b7_2722_0a95;
 
