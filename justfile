@@ -75,6 +75,12 @@ test Y=YEAR D=DAY:
 bench Y=YEAR D=DAY:
     cargo test -r -p y{{ Y }}d{{ D }} "benchmark" --quiet -- --no-capture --test-threads 1
 
+[doc("Probe the performance of a specific day's puzzle and make plot")]
+[group("puzzle")]
+analyze Y=YEAR D=DAY:
+    RUSTFLAGS="-Clink-arg=-Wl,--no-rosegment" cargo flamegraph --profile bench --palette rust -o year{{ Y }}/day{{ D }}/flamegraph.svg --unit-test y{{ Y }}d{{ D }} -- benchmark
+    rm perf.data*
+
 [doc("Run the solution for a specific day's puzzle with actual input")]
 [group("puzzle")]
 run Y=YEAR D=DAY:

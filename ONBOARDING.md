@@ -26,13 +26,14 @@ You are more than welcome to use this as a template for your own Advent of Code 
      - `cargo-sort` (for sorting Cargo.toml)
      - `cargo-sort-derives` (for sorting derive macros)
      - `cargo-machete` (for detecting unused dependencies)
+     - `flamegraph` (for analyzing code performance)
 
      All can be installed via Cargo or `cargo-binstall`:
 
      ```sh
-     cargo install cargo-autoinherit cargo-sort cargo-sort-derives cargo-machete
+     cargo install cargo-autoinherit cargo-sort cargo-sort-derives cargo-machete flamegraph
      # or
-     cargo binstall cargo-autoinherit cargo-sort cargo-sort-derives cargo-machete
+     cargo binstall cargo-autoinherit cargo-sort cargo-sort-derives cargo-machete flamegraph
      # or your preferred method, e.g., system package managers
      ```
 
@@ -137,6 +138,20 @@ just bench "*" "*"
 ```
 
 Benchmark results will be written in each day's directory, next to the input and output files, in a file named `benchmark.csv`. You can open this file in a spreadsheet application to analyze the results.
+
+You can also trace and plot a flamegraph if you have it installed:
+
+```sh
+just analyze
+```
+
+Note that unlike `just bench`, you can only specify certain year and day to run the analysis:
+
+```sh
+just bench 2025 05
+```
+
+This will generate `flamegraph.svg` next to input and output files. It is interactive, and may be better viewed in a browser.
 
 ### Housekeeping Chores
 

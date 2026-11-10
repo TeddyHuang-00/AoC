@@ -29,3 +29,6 @@ expect_used = "deny"
 module_name_repetitions = "allow"
 missing_errors_doc = "allow"
 missing_panics_doc = "allow"
+
+[profile.bench]
+debug = true

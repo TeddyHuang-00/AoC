@@ -6,3 +6,5 @@
 *.png
 
 /benchmarks
+flamegraph.svg
+perf.data*
