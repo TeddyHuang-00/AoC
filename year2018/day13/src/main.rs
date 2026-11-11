@@ -1,4 +1,4 @@
-use std::hash::BuildHasherDefault;
+use std::{collections::BTreeSet, hash::BuildHasherDefault};
 
 use anyhow::Result;
 use nom::{
@@ -133,8 +133,7 @@ impl Puzzle {
     }
 
     fn tick(&self, carts: &mut FxHashMap<Coord, (Direction, u8)>) -> Vec<Coord> {
-        let mut update_order = carts.keys().copied().collect::<Vec<_>>();
-        update_order.sort_by_key(|coord| (coord.y, coord.x));
+        let update_order = carts.keys().copied().collect::<BTreeSet<_>>();
         let mut crashes = vec![];
         for mut coord in update_order {
             let Some((mut dir, mut counter)) = carts.remove(&coord) else {
